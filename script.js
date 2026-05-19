@@ -415,6 +415,16 @@ function searchKebabs() {
   window.open('https://www.google.com/maps/search/kebab/@' + lat + ',' + lng + ',15z', '_blank');
 }
 
+function searchCoffee() {
+  if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
+    alert('Map not ready yet. Try again in a moment.');
+    return;
+  }
+  var lat = currentLoc.lat;
+  var lng = currentLoc.lng;
+  window.open('https://www.google.com/maps/search/coffee/@' + lat + ',' + lng + ',15z', '_blank');
+}
+
 function useGPS() {
   if (!navigator.geolocation) { alert('GPS not available'); return; }
   var btn = el('gpsBtn');
