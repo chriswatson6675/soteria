@@ -4,10 +4,12 @@ function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 
 function switchTab(tab) {
   el('tab-map').classList.remove('active');
+  el('tab-places').classList.remove('active');
   el('tab-docs').classList.remove('active');
   el('tab-emergency').classList.remove('active');
   el('tab-currency').classList.remove('active');
   el('tabBtnMap').classList.remove('active');
+  el('tabBtnPlaces').classList.remove('active');
   el('tabBtnDocs').classList.remove('active');
   el('tabBtnEmergency').classList.remove('active');
   el('tabBtnCurrency').classList.remove('active');

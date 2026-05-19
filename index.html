@@ -15,6 +15,7 @@
   <div id="offlineNotice" style="display:none; background:#ffa500; color:white; padding:0.75rem 1rem; border-radius:8px; align-items:center; gap:0.5rem; font-size:14px; font-weight:500; flex-shrink:0; margin-bottom:0.25rem;"></div>
   <div class="tab-bar">
     <button class="tab-btn active" id="tabBtnMap" onclick="switchTab('map')"><i class="fas fa-map"></i> Map</button>
+    <button class="tab-btn" id="tabBtnPlaces" onclick="switchTab('places')"><i class="fas fa-map-pin"></i> Places</button>
     <button class="tab-btn" id="tabBtnDocs" onclick="switchTab('docs')"><i class="fas fa-folder-open"></i> Documents</button>
     <button class="tab-btn" id="tabBtnEmergency" onclick="switchTab('emergency')"><i class="fas fa-phone"></i> Emergency</button>
     <button class="tab-btn" id="tabBtnCurrency" onclick="switchTab('currency')"><i class="fas fa-dollar-sign"></i> Currency</button>
@@ -22,10 +23,6 @@
 
   <div class="tab-content active" id="tab-map">
     <div class="sidebar">
-      <div class="section-heading"><i class="fas fa-map-pin"></i> Quick places</div>
-      <p class="hint">Click map or search to save to these 6 slots.</p>
-      <div id="presetsWithAccom"></div>
-
       <div class="section-heading"><i class="fas fa-cloud-sun"></i> Weather</div>
       <div class="weather-card">
         <div class="weather-loc" id="wLoc">GETTING YOUR LOCATION…</div>
@@ -115,6 +112,14 @@
         </div>
       </div>
       <div id="map"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-places">
+    <div class="section-heading" style="flex-shrink:0;"><i class="fas fa-map-pin"></i> My Places</div>
+    <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+      <p class="hint" style="flex-shrink:0;">Click map to save locations to these 6 slots.</p>
+      <div id="presetsWithAccom"></div>
     </div>
   </div>
 
