@@ -281,10 +281,14 @@ function openWebsiteFromModal() {
 function loadAccommodation() {}
 
 function renderPresets() {
-  var container = el('presetsWithAccom');
-  container.innerHTML = '';
+  // Render to both the sidebar and the Places tab
+  var containers = [el('presetsWithAccom'), el('presetsWithAccomTab')];
   
-  presets.forEach(function (p, idx) {
+  containers.forEach(function(container) {
+    if (!container) return;
+    container.innerHTML = '';
+    
+    presets.forEach(function (p, idx) {
     // Container for place + accommodation
     var placeContainer = document.createElement('div');
     placeContainer.style.cssText = 'margin-bottom:0.5rem; border:1px solid #e8e8e8; border-radius:8px; padding:0.5rem; background:#fafafa;';
@@ -371,6 +375,7 @@ function renderPresets() {
     
     placeContainer.appendChild(accomRow);
     container.appendChild(placeContainer);
+    });
   });
 }
 

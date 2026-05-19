@@ -23,6 +23,10 @@
 
   <div class="tab-content active" id="tab-map">
     <div class="sidebar">
+      <div class="section-heading"><i class="fas fa-map-pin"></i> Quick places</div>
+      <p class="hint">Your 6 saved locations (see Places tab)</p>
+      <div id="presetsWithAccom"></div>
+
       <div class="section-heading"><i class="fas fa-cloud-sun"></i> Weather</div>
       <div class="weather-card">
         <div class="weather-loc" id="wLoc">GETTING YOUR LOCATION…</div>
@@ -118,7 +122,7 @@
   <div class="tab-content" id="tab-places">
     <div class="section-heading" style="flex-shrink:0;"><i class="fas fa-map-pin"></i> My Places</div>
     <p class="hint" style="flex-shrink:0; margin-bottom:1rem;">Click map to save locations to these 6 slots.</p>
-    <div id="presetsWithAccom" style="flex: 1; overflow-y: auto;"></div>
+    <div id="presetsWithAccomTab" style="flex: 1; overflow-y: auto;"></div>
   </div>
 
   <div class="tab-content" id="tab-docs">
