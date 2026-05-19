@@ -1,0 +1,50 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0055aa;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="256" height="256" fill="white"/>
+  
+  <!-- Main shield shape -->
+  <g transform="translate(128, 80)">
+    <!-- Shield body -->
+    <path d="M -60 -40 L 60 -40 L 60 20 Q 0 70 0 70 Q 0 70 -60 20 Z" fill="url(#shieldGradient)" stroke="#003d7a" stroke-width="2"/>
+    
+    <!-- Compass rose center circle -->
+    <circle cx="0" cy="0" r="28" fill="white" stroke="#0066cc" stroke-width="1.5"/>
+    
+    <!-- Compass points (N, S, E, W) -->
+    <!-- North point -->
+    <line x1="0" y1="-22" x2="0" y2="-12" stroke="#0066cc" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="0,-26 -3,-16 3,-16" fill="#0066cc"/>
+    
+    <!-- East point -->
+    <line x1="22" y1="0" x2="12" y2="0" stroke="#0066cc" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="26,0 16,3 16,-3" fill="#0066cc"/>
+    
+    <!-- South point -->
+    <line x1="0" y1="22" x2="0" y2="12" stroke="#0066cc" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="0,26 -2.5,16 2.5,16" fill="#0066cc"/>
+    
+    <!-- West point -->
+    <line x1="-22" y1="0" x2="-12" y2="0" stroke="#0066cc" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="-26,0 -16,-3 -16,3" fill="#0066cc"/>
+    
+    <!-- Inner circle for compass -->
+    <circle cx="0" cy="0" r="6" fill="#0066cc"/>
+    
+    <!-- Plane silhouette (small) inside shield -->
+    <g transform="translate(0, 10)">
+      <!-- Plane fuselage -->
+      <ellipse cx="0" cy="0" rx="16" ry="4" fill="white" opacity="0.9"/>
+      <!-- Plane wings -->
+      <line x1="-18" y1="0" x2="18" y2="0" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+      <!-- Tail -->
+      <polygon points="14,0 20,3 20,-3" fill="white" opacity="0.9"/>
+    </g>
+  </g>
+</svg>
