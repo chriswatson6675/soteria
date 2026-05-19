@@ -383,10 +383,13 @@ function togglePresetEdit() {}
 
 function goToPlace(place) {
   currentLoc = { lat: place.lat, lng: place.lng, name: place.name };
-  map.setView([place.lat, place.lng], 14);
-  setTimeout(function () { map.invalidateSize(); }, 100);
-  if (placeMarker) map.removeLayer(placeMarker);
-  placeMarker = L.marker([place.lat, place.lng]).addTo(map).bindPopup('<b>' + esc(place.name) + '</b>').openPopup();
+  switchTab('map');
+  setTimeout(function () {
+    map.setView([place.lat, place.lng], 14);
+    map.invalidateSize();
+    if (placeMarker) map.removeLayer(placeMarker);
+    placeMarker = L.marker([place.lat, place.lng]).addTo(map).bindPopup('<b>' + esc(place.name) + '</b>').openPopup();
+  }, 100);
   fetchWeather(currentLoc);
   renderTransport(place);
 }
