@@ -416,12 +416,14 @@ function searchKebabs() {
 }
 
 function searchCoffee() {
+  console.log('Coffee button clicked');
   if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
     alert('Map not ready yet. Try again in a moment.');
     return;
   }
   var lat = currentLoc.lat;
   var lng = currentLoc.lng;
+  console.log('Opening coffee search at', lat, lng);
   window.open('https://www.google.com/maps/search/coffee/@' + lat + ',' + lng + ',15z', '_blank');
 }
 
