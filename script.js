@@ -408,7 +408,11 @@ function searchKebabs() {
   if (!map) return;
   var center = map.getCenter();
   var lat = center.lat, lng = center.lng;
-  window.open('https://www.google.com/maps/search/kebab/@' + lat + ',' + lng + ',15z', '_blank');
+  var url = 'https://www.google.com/maps/search/kebab/@' + lat + ',' + lng + ',15z';
+  // Use location.href for better mobile compatibility
+  setTimeout(function() {
+    window.location.href = url;
+  }, 100);
 }
 
 function useGPS() {
