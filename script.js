@@ -285,24 +285,24 @@ function renderPresets() {
   presets.forEach(function (p, idx) {
     // Container for place + accommodation
     var placeContainer = document.createElement('div');
-    placeContainer.style.cssText = 'margin-bottom:1rem; border:1px solid #e8e8e8; border-radius:8px; padding:0.75rem; background:#fafafa;';
+    placeContainer.style.cssText = 'margin-bottom:0.5rem; border:1px solid #e8e8e8; border-radius:8px; padding:0.5rem; background:#fafafa;';
     
     // Place row with number
     var placeRow = document.createElement('div');
-    placeRow.style.cssText = 'display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;';
+    placeRow.style.cssText = 'display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;';
     
     var numBadge = document.createElement('div');
-    numBadge.style.cssText = 'background:#0066cc; color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0;';
+    numBadge.style.cssText = 'background:#0066cc; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;';
     numBadge.textContent = (idx + 1);
     
     var nameBtn = document.createElement('button');
     nameBtn.className = 'btn';
-    nameBtn.style.cssText = 'flex:1; justify-content:flex-start; font-size:13px; font-weight:600;';
+    nameBtn.style.cssText = 'flex:1; justify-content:flex-start; font-size:12px; font-weight:600; padding:0.4rem 0.6rem;';
     nameBtn.textContent = p.name ? p.name : 'Empty slot ' + (idx + 1);
     nameBtn.addEventListener('click', function () { if (p.name && p.lat && p.lng) goToPlace(p); });
     
     var flagSpan = document.createElement('span');
-    flagSpan.style.cssText = 'margin-right:0.5rem;';
+    flagSpan.style.cssText = 'margin-right:0.3rem; font-size:14px;';
     if (p.lat && p.lng && p.name) {
       flagSpan.textContent = '🌍';
       fetch('https://nominatim.openstreetmap.org/reverse?lat=' + p.lat + '&lon=' + p.lng + '&format=json')
@@ -322,7 +322,7 @@ function renderPresets() {
     // Accommodation row
     var accom = accommodations[p.id] || {};
     var accomRow = document.createElement('div');
-    accomRow.style.cssText = 'display:flex; align-items:center; gap:0.5rem; margin-left:44px;';
+    accomRow.style.cssText = 'display:flex; align-items:center; gap:0.4rem; margin-left:36px;';
     
     if (!accom.name) {
       var addBtn = document.createElement('button');
