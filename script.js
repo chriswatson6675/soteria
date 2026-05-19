@@ -444,19 +444,9 @@ function searchPlace() {
         var name = result.display_name.split(',').slice(0, 2).join(', ');
         var type = result.type || '';
         
-        // Add numbered marker to map
-        var marker = L.marker([lat, lng], {
-          icon: L.divIcon({
-            className: '',
-            html: '<div style="background:#0066cc; color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; border:2px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + (idx + 1) + '</div>',
-            iconSize: [28, 28],
-            iconAnchor: [14, 14]
-          })
-        }).addTo(map).bindPopup('<b>' + esc(name) + '</b>');
-        searchMarkers.push(marker);
         bounds.push([lat, lng]);
         
-        // Add result item
+        // Add result item to list
         var item = document.createElement('div');
         item.className = 'search-result-item';
         item.innerHTML = '<div class="search-result-name"><span style="background:#0066cc; color:white; border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; margin-right:0.4rem;">' + (idx + 1) + '</span>' + esc(name) + '</div><div class="search-result-meta">' + esc(type) + '</div>';
@@ -466,7 +456,7 @@ function searchPlace() {
         resultsDiv.appendChild(item);
       });
       
-      // Switch to map and fit all markers in view
+      // Switch to map first, then add markers
       switchTab('map');
       
       // Show results overlay on map
@@ -483,14 +473,37 @@ function searchPlace() {
         });
       });
       
+      // Wait for tab switch to complete then add markers
       setTimeout(function() {
         map.invalidateSize();
+        
+        // Add all markers after map is ready
+        clearSearchMarkers();
+        bounds.forEach(function(b, idx) {
+          var result = data[idx];
+          var name = result.display_name.split(',').slice(0, 2).join(', ');
+          var marker = L.marker([b[0], b[1]], {
+            icon: L.divIcon({
+              className: '',
+              html: '<div style="background:#0066cc; color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; border:2px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + (idx + 1) + '</div>',
+              iconSize: [28, 28],
+              iconAnchor: [14, 14]
+            })
+          }).addTo(map).bindPopup('<b>' + esc(name) + '</b>');
+          marker.on('click', function() {
+            overlay.style.display = 'none';
+            resultsDiv.style.display = 'none';
+            pickPlaceResult(result);
+          });
+          searchMarkers.push(marker);
+        });
+        
         if (bounds.length > 1) {
           map.fitBounds(bounds, { padding: [40, 40] });
         } else {
           map.setView(bounds[0], 14);
         }
-      }, 100);
+      }, 300);
     })
     .catch(function() {
       resultsDiv.innerHTML = '<div class="search-result-item">Search failed. Check your connection.</div>';
