@@ -447,6 +447,62 @@ function pickPlaceResult(result) {
   var lat = parseFloat(result.lat);
   var lng = parseFloat(result.lon);
   
+  // Clear search results
+  el('placeSearch').value = '';
+  el('placeSearchResults').style.display = 'none';
+  
+  // Switch to map and preview the location
+  switchTab('map');
+  setTimeout(function() {
+    map.setView([lat, lng], 14);
+    map.invalidateSize();
+    if (placeMarker) map.removeLayer(placeMarker);
+    placeMarker = L.marker([lat, lng]).addTo(map).bindPopup('<b>' + esc(name) + '</b><br><small>Tap Save to add to your places</small>').openPopup();
+  }, 100);
+  
+  // Update current location for weather/transport
+  currentLoc = { lat: lat, lng: lng, name: name };
+  fetchWeather(currentLoc);
+  renderTransport(currentLoc);
+  
+  // Show save prompt at bottom of map
+  showSavePrompt(name, lat, lng);
+}
+
+function showSavePrompt(name, lat, lng) {
+  // Remove existing prompt if any
+  var existing = el('savePrompt');
+  if (existing) existing.remove();
+  
+  var prompt = document.createElement('div');
+  prompt.id = 'savePrompt';
+  prompt.style.cssText = 'position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:white; border-radius:12px; padding:1rem 1.25rem; box-shadow:0 4px 20px rgba(0,0,0,0.2); display:flex; align-items:center; gap:0.75rem; z-index:9999; max-width:90%; font-size:13px; font-weight:600;';
+  prompt.innerHTML = '<span style="flex:1; color:#1a1a1a;">Save <span style="color:#0066cc;">' + esc(name) + '</span> to your places?</span>';
+  
+  var yesBtn = document.createElement('button');
+  yesBtn.className = 'btn blue';
+  yesBtn.style.cssText = 'font-size:12px; padding:0.4rem 0.75rem; flex-shrink:0;';
+  yesBtn.textContent = 'Save';
+  yesBtn.onclick = function() {
+    savePreviewPlace(name, lat, lng);
+    prompt.remove();
+  };
+  
+  var noBtn = document.createElement('button');
+  noBtn.className = 'btn';
+  noBtn.style.cssText = 'font-size:12px; padding:0.4rem 0.75rem; flex-shrink:0;';
+  noBtn.textContent = 'Dismiss';
+  noBtn.onclick = function() { prompt.remove(); };
+  
+  prompt.appendChild(yesBtn);
+  prompt.appendChild(noBtn);
+  document.body.appendChild(prompt);
+  
+  // Auto dismiss after 10 seconds
+  setTimeout(function() { if (el('savePrompt')) el('savePrompt').remove(); }, 10000);
+}
+
+function savePreviewPlace(name, lat, lng) {
   // Find next empty slot
   var emptySlot = -1;
   for (var i = 0; i < presets.length; i++) {
@@ -463,14 +519,8 @@ function pickPlaceResult(result) {
   
   presets[emptySlot] = { id: emptySlot + 1, name: name, lat: lat, lng: lng };
   localStorage.setItem('hta_presets', JSON.stringify(presets));
-  
-  // Clear search
-  el('placeSearch').value = '';
-  el('placeSearchResults').style.display = 'none';
-  
-  // Render and go to place
   renderPresets();
-  goToPlace(presets[emptySlot]);
+  showStatus('✓ ' + name + ' saved to slot ' + (emptySlot + 1), true);
 }
 
 function searchKebabs() {
