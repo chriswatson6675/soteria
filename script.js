@@ -404,6 +404,13 @@ function renderTransport(place) {
     });
 }
 
+function searchKebabs() {
+  if (!map) return;
+  var center = map.getCenter();
+  var lat = center.lat, lng = center.lng;
+  window.open('https://www.google.com/maps/search/kebab/@' + lat + ',' + lng + ',15z', '_blank');
+}
+
 function useGPS() {
   if (!navigator.geolocation) { alert('GPS not available'); return; }
   var btn = el('gpsBtn');
