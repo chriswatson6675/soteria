@@ -405,14 +405,14 @@ function renderTransport(place) {
 }
 
 function searchKebabs() {
-  if (!map) return;
-  var center = map.getCenter();
-  var lat = center.lat, lng = center.lng;
-  var url = 'https://www.google.com/maps/search/kebab/@' + lat + ',' + lng + ',15z';
-  // Use location.href for better mobile compatibility
-  setTimeout(function() {
-    window.location.href = url;
-  }, 100);
+  // Use currentLoc (which is updated when you navigate) instead of map.getCenter()
+  if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
+    alert('Map not ready yet. Try again in a moment.');
+    return;
+  }
+  var lat = currentLoc.lat;
+  var lng = currentLoc.lng;
+  window.open('https://www.google.com/maps/search/kebab/@' + lat + ',' + lng + ',15z', '_blank');
 }
 
 function useGPS() {
