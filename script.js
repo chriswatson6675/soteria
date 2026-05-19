@@ -410,6 +410,13 @@ function renderTransport(place) {
     });
 }
 
+var searchMarkers = [];
+
+function clearSearchMarkers() {
+  searchMarkers.forEach(function(m) { map.removeLayer(m); });
+  searchMarkers = [];
+}
+
 function searchPlace() {
   var query = el('placeSearch').value.trim();
   if (!query) return;
@@ -424,18 +431,66 @@ function searchPlace() {
         resultsDiv.innerHTML = '<div class="search-result-item">No results found</div>';
         return;
       }
+      
+      // Clear old search markers
+      clearSearchMarkers();
+      
       resultsDiv.innerHTML = '';
-      data.forEach(function(result) {
-        var item = document.createElement('div');
-        item.className = 'search-result-item';
+      var bounds = [];
+      
+      data.forEach(function(result, idx) {
+        var lat = parseFloat(result.lat);
+        var lng = parseFloat(result.lon);
         var name = result.display_name.split(',').slice(0, 2).join(', ');
         var type = result.type || '';
-        item.innerHTML = '<div class="search-result-name">' + esc(name) + '</div><div class="search-result-meta">' + esc(type) + '</div>';
+        
+        // Add numbered marker to map
+        var marker = L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: '',
+            html: '<div style="background:#0066cc; color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; border:2px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + (idx + 1) + '</div>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+          })
+        }).addTo(map).bindPopup('<b>' + esc(name) + '</b>');
+        searchMarkers.push(marker);
+        bounds.push([lat, lng]);
+        
+        // Add result item
+        var item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.innerHTML = '<div class="search-result-name"><span style="background:#0066cc; color:white; border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; margin-right:0.4rem;">' + (idx + 1) + '</span>' + esc(name) + '</div><div class="search-result-meta">' + esc(type) + '</div>';
         item.addEventListener('click', function() {
           pickPlaceResult(result);
         });
         resultsDiv.appendChild(item);
       });
+      
+      // Switch to map and fit all markers in view
+      switchTab('map');
+      
+      // Show results overlay on map
+      var overlay = el('mapSearchResultsOverlay');
+      overlay.style.display = 'block';
+      overlay.innerHTML = resultsDiv.innerHTML;
+      // Re-attach click events to overlay items
+      var overlayItems = overlay.querySelectorAll('.search-result-item');
+      overlayItems.forEach(function(item, idx) {
+        item.addEventListener('click', function() {
+          overlay.style.display = 'none';
+          resultsDiv.style.display = 'none';
+          pickPlaceResult(data[idx]);
+        });
+      });
+      
+      setTimeout(function() {
+        map.invalidateSize();
+        if (bounds.length > 1) {
+          map.fitBounds(bounds, { padding: [40, 40] });
+        } else {
+          map.setView(bounds[0], 14);
+        }
+      }, 100);
     })
     .catch(function() {
       resultsDiv.innerHTML = '<div class="search-result-item">Search failed. Check your connection.</div>';
@@ -447,11 +502,13 @@ function pickPlaceResult(result) {
   var lat = parseFloat(result.lat);
   var lng = parseFloat(result.lon);
   
-  // Clear search results
+  // Clear search results and all search markers
   el('placeSearch').value = '';
   el('placeSearchResults').style.display = 'none';
+  el('mapSearchResultsOverlay').style.display = 'none';
+  clearSearchMarkers();
   
-  // Switch to map and preview the location
+  // Switch to map and show chosen location
   switchTab('map');
   setTimeout(function() {
     map.setView([lat, lng], 14);

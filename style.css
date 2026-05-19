@@ -8,7 +8,7 @@ html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 .tab-content.active { display: flex; gap: 1rem; }
 #tab-map { flex-direction: row; }
 .sidebar { background: white; border-radius: 14px; padding: 1.25rem; overflow-y: auto; width: 360px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-.map-panel { background: white; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; flex: 1; min-width: 0; height: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+.map-panel { background: white; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; flex: 1; min-width: 0; height: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.07); position: relative; }
 #map { flex: 1; min-height: 0; border-radius: 10px; border: 1px solid #e8e8e8; }
 #tab-docs, #tab-emergency, #tab-currency, #tab-places { flex-direction: column; background: white; border-radius: 14px; padding: 1.25rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
 .section-heading { font-size: 15px; font-weight: 700; color: #1a1a1a; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; margin-top: 1.5rem; }
