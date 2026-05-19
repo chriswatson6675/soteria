@@ -431,12 +431,14 @@ function searchCoffee() {
 }
 
 function searchMcDonalds() {
+  console.log('McDonald\'s button clicked');
   if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
     alert('Map not ready yet. Try again in a moment.');
     return;
   }
   var lat = currentLoc.lat;
   var lng = currentLoc.lng;
+  console.log('Opening McDonald\'s search at', lat, lng);
   var url = 'https://www.google.com/maps/search/mcdonalds/@' + lat + ',' + lng + ',15z';
   window.location.href = url;
 }
