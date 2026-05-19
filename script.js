@@ -431,8 +431,8 @@ function searchCoffee() {
 }
 
 function searchMcDonalds() {
+  alert('Button tapped! Location: ' + (currentLoc ? currentLoc.lat + ',' + currentLoc.lng : 'not set'));
   if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
-    alert('Map not ready yet. Try again in a moment.');
     return;
   }
   var lat = currentLoc.lat;
