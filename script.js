@@ -434,6 +434,17 @@ function searchCoffee() {
   window.location.href = url;
 }
 
+function searchMcDonalds() {
+  if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
+    alert('Map not ready yet. Try again in a moment.');
+    return;
+  }
+  var lat = currentLoc.lat;
+  var lng = currentLoc.lng;
+  var url = 'https://www.google.com/maps/search/mcdonalds/@' + lat + ',' + lng + ',15z';
+  window.location.href = url;
+}
+
 function useGPS() {
   if (!navigator.geolocation) { alert('GPS not available'); return; }
   var btn = el('gpsBtn');
