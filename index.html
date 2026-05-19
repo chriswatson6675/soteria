@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holiday Travel Companion</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <div id="offlineNotice" style="display:none; background:#ffa500; color:white; padding:0.75rem 1rem; border-radius:8px; align-items:center; gap:0.5rem; font-size:14px; font-weight:500; flex-shrink:0; margin-bottom:0.25rem;"></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabBtnMap" onclick="switchTab('map')"><i class="fas fa-map"></i> Map</button>
+    <button class="tab-btn" id="tabBtnDocs" onclick="switchTab('docs')"><i class="fas fa-folder-open"></i> Documents</button>
+    <button class="tab-btn" id="tabBtnEmergency" onclick="switchTab('emergency')"><i class="fas fa-phone"></i> Emergency</button>
+    <button class="tab-btn" id="tabBtnCurrency" onclick="switchTab('currency')"><i class="fas fa-dollar-sign"></i> Currency</button>
+  </div>
+
+  <div class="tab-content active" id="tab-map">
+    <div class="sidebar">
+      <div class="section-heading"><i class="fas fa-cloud-sun"></i> Weather</div>
+      <div class="weather-card">
+        <div class="weather-loc" id="wLoc">GETTING YOUR LOCATION…</div>
+        <div class="weather-body">
+          <div class="weather-emoji" id="wIcon">⏳</div>
+          <div>
+            <div class="weather-temp" id="wTemp">—</div>
+            <div class="weather-desc" id="wDesc">Finding location…</div>
+            <div class="weather-detail" id="wHumidity"></div>
+            <div class="weather-detail" id="wWind"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn full" id="forecastBtn" onclick="openForecast()" disabled>
+        <i class="fas fa-calendar-week"></i> View 7-day forecast
+      </button>
+
+      <div class="section-heading"><i class="fas fa-map-pin"></i> Quick places</div>
+      <p class="hint">Click map or search to save to these 6 slots.</p>
+      <div id="presetsWithAccom"></div>
+
+      <div class="section-heading"><i class="fas fa-bus"></i> Public transport</div>
+    </div>
+
+    <div id="accomModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+      <div style="background:white; border-radius:12px; padding:1.5rem; max-width:400px; width:90%; max-height:80vh; overflow-y:auto; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+        <div style="font-size:16px; font-weight:700; margin-bottom:1rem; color:#0066cc;">Edit Accommodation</div>
+        
+        <div style="margin-bottom:0.75rem;">
+          <label style="display:block; font-size:11px; font-weight:600; color:#333; margin-bottom:0.3rem;">Hotel name</label>
+          <input type="text" id="accomName" placeholder="e.g. Hotel Milano" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px; font-size:12px; box-sizing:border-box;">
+        </div>
+        
+        <div style="margin-bottom:0.75rem;">
+          <label style="display:block; font-size:11px; font-weight:600; color:#333; margin-bottom:0.3rem;">Address</label>
+          <input type="text" id="accomAddress" placeholder="Street address or location" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px; font-size:12px; box-sizing:border-box;">
+        </div>
+        
+        <div style="margin-bottom:0.75rem;">
+          <label style="display:block; font-size:11px; font-weight:600; color:#333; margin-bottom:0.3rem;">Phone number</label>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="text" id="accomPhone" placeholder="e.g. +39 02 1234 5678" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:6px; font-size:12px; box-sizing:border-box;">
+            <button id="phoneCallBtn" style="display:none; padding:0.5rem 0.75rem; background:#0066cc; color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px;" onclick="callPhoneFromModal()"><i class="fas fa-phone"></i></button>
+          </div>
+        </div>
+        
+        <div style="margin-bottom:0.75rem;">
+          <label style="display:block; font-size:11px; font-weight:600; color:#333; margin-bottom:0.3rem;">Website</label>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="text" id="accomWebsite" placeholder="e.g. www.hotel.com" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:6px; font-size:12px; box-sizing:border-box;">
+            <button id="websiteBtn" style="display:none; padding:0.5rem 0.75rem; background:#0066cc; color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px;" onclick="openWebsiteFromModal()"><i class="fas fa-globe"></i></button>
+          </div>
+        </div>
+        
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:11px; font-weight:600; color:#333; margin-bottom:0.3rem;">Notes</label>
+          <textarea id="accomNotes" placeholder="Check-in time, booking ref, special requests..." style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px; font-size:12px; box-sizing:border-box; resize:vertical; min-height:60px;"></textarea>
+        </div>
+        
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn blue full" onclick="saveAccomModal()" style="flex:1; font-size:12px;">Save</button>
+          <button class="btn full" onclick="closeAccomModal()" style="flex:1; font-size:12px;">Cancel</button>
+        </div>
+        <button class="btn" onclick="deleteAccomFromModal()" style="width:100%; margin-top:0.5rem; font-size:11px; color:#cc3333;">Delete accommodation</button>
+      </div>
+    </div>
+
+      <div class="section-heading"><i class="fas fa-bus"></i> Public transport</div>
+      <div class="transport-btns" id="transportBtns"><div class="empty-msg">Select a place</div></div>
+    </div>
+
+    <div class="map-panel">
+      <div class="map-controls">
+        <button class="btn" id="gpsBtn" onclick="useGPS()"><i class="fas fa-location-crosshairs"></i> My location</button>
+        <button class="btn" id="routeBtn" onclick="toggleRoute()"><i class="fas fa-route"></i> Plan route</button>
+        <button class="btn" onclick="clearAll()"><i class="fas fa-eraser"></i> Clear</button>
+      </div>
+      <div class="map-status" id="mapStatus"></div>
+      <div class="transit-panel" id="transitPanel">
+        <div class="transit-panel-title"><i class="fas fa-directions"></i> Open Google Maps for live directions:</div>
+        <div class="transit-grid">
+          <button class="btn blue" onclick="gmaps('transit')"><i class="fas fa-bus"></i> Public transport</button>
+          <button class="btn" onclick="gmaps('walking')"><i class="fas fa-walking"></i> Walking</button>
+          <button class="btn" onclick="gmaps('driving')"><i class="fas fa-car"></i> Driving</button>
+          <button class="btn" onclick="gmaps('bicycling')"><i class="fas fa-bicycle"></i> Cycling</button>
+        </div>
+      </div>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-docs">
+    <div class="section-heading" style="flex-shrink:0;"><i class="fas fa-folder-open"></i> My Documents</div>
+    <div class="docs-main">
+      <button class="btn blue full" onclick="openGoogleDrive()" style="flex-shrink:0;">
+        <i class="fas fa-cloud"></i> Open shared Google Drive folder
+      </button>
+      <div class="drop-zone" id="dropZone" onclick="el('fileInput').click()" style="flex-shrink:0;">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Drag &amp; drop files here</p>
+        <span>PDFs and images — tap to browse</span>
+        <input type="file" id="fileInput" accept=".pdf,image/*" multiple>
+      </div>
+      <div class="doc-list" id="docList"><div class="empty-msg">No documents yet</div></div>
+      <div style="font-size:11px; color:#bbb; text-align:center; flex-shrink:0;">Stored in your phone · max ~4 MB per file</div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-emergency">
+    <div class="section-heading" style="flex-shrink:0;"><i class="fas fa-phone"></i> Emergency Contacts</div>
+    <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+      <div class="contact-form">
+        <div class="form-group">
+          <label>Your parent/guardian number</label>
+          <input type="tel" id="contactParent" placeholder="+44 123 456 7890">
+        </div>
+        <div class="form-group">
+          <label>Your home country emergency</label>
+          <select id="contactCountry" onchange="updateEmergencyNumbers()">
+            <option value="">Select country</option>
+            <option value="UK">UK — 999</option>
+            <option value="EU">EU — 112</option>
+            <option value="US">USA — 911</option>
+            <option value="AU">Australia — 000</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Insurance helpline (from your documents)</label>
+          <input type="tel" id="contactInsurance" placeholder="+44 123 456 7890">
+        </div>
+        <button class="btn blue full" onclick="saveEmergencyContacts()" style="flex-shrink:0;">
+          <i class="fas fa-save"></i> Save contacts
+        </button>
+      </div>
+
+      <div class="section-heading" style="margin-top:1rem;"><i class="fas fa-list"></i> Your contacts</div>
+      <div class="contact-list" id="emergencyContactsList">
+        <div class="empty-msg">No emergency contacts saved yet</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-currency">
+    <div class="section-heading" style="flex-shrink:0;"><i class="fas fa-dollar-sign"></i> Currency Converter</div>
+    <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+      <p class="hint" style="flex-shrink:0;">Converts using latest rates. Works offline with last known rates.</p>
+      <div class="converter-grid" style="flex-shrink:0;">
+        <div class="converter-col">
+          <label>Amount</label>
+          <input type="number" id="currencyAmount" value="1" onchange="convertCurrency()" step="0.01">
+        </div>
+        <div class="converter-col">
+          <label>From currency</label>
+          <select id="currencyFrom" onchange="convertCurrency()">
+            <option value="GBP">🇬🇧 GBP (£)</option>
+            <option value="EUR">🇪🇺 EUR (€)</option>
+            <option value="USD">🇺🇸 USD ($)</option>
+            <option value="JPY">🇯🇵 JPY (¥)</option>
+            <option value="AUD">🇦🇺 AUD ($)</option>
+            <option value="CAD">🇨🇦 CAD ($)</option>
+            <option value="CHF">🇨🇭 CHF (CHF)</option>
+            <option value="SGD">🇸🇬 SGD ($)</option>
+            <option value="HKD">🇭🇰 HKD ($)</option>
+          </select>
+        </div>
+      </div>
+      <div class="converter-grid" style="flex-shrink:0;">
+        <div class="converter-col">
+          <label>To currency</label>
+          <select id="currencyTo" onchange="convertCurrency()">
+            <option value="EUR">🇪🇺 EUR (€)</option>
+            <option value="GBP">🇬🇧 GBP (£)</option>
+            <option value="USD">🇺🇸 USD ($)</option>
+            <option value="JPY">🇯🇵 JPY (¥)</option>
+            <option value="AUD">🇦🇺 AUD ($)</option>
+            <option value="CAD">🇨🇦 CAD ($)</option>
+            <option value="CHF">🇨🇭 CHF (CHF)</option>
+            <option value="SGD">🇸🇬 SGD ($)</option>
+            <option value="HKD">🇭🇰 HKD ($)</option>
+          </select>
+        </div>
+        <div class="converter-col">
+          <label>&nbsp;</label>
+          <button class="btn blue full" onclick="convertCurrency()"><i class="fas fa-exchange-alt"></i> Convert</button>
+        </div>
+      </div>
+      <div class="conversion-result" id="conversionResult">
+        <div class="conversion-result-value" id="conversionValue">0.00</div>
+        <div class="conversion-result-label" id="conversionLabel">Select currencies</div>
+      </div>
+      <button class="btn full" onclick="fetchExchangeRates()" style="flex-shrink:0;">
+        <i class="fas fa-sync-alt"></i> Update exchange rates
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="forecastModal" onclick="if(event.target===this) closeForecast()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">7-Day Forecast</div>
+        <div class="modal-subtitle" id="modalLoc"></div>
+      </div>
+      <button class="modal-close" onclick="closeForecast()">✕</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

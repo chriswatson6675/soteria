@@ -1,0 +1,46 @@
+# Node modules (if using npm in the future)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build files (if needed in the future)
+dist/
+build/
+*.min.js
+*.min.css
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+ehthumbs.db
+Desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
