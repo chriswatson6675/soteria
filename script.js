@@ -410,6 +410,69 @@ function renderTransport(place) {
     });
 }
 
+function searchPlace() {
+  var query = el('placeSearch').value.trim();
+  if (!query) return;
+  var resultsDiv = el('placeSearchResults');
+  resultsDiv.style.display = 'block';
+  resultsDiv.innerHTML = '<div class="search-result-item">Searching...</div>';
+  
+  fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&format=json&limit=5')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.length) {
+        resultsDiv.innerHTML = '<div class="search-result-item">No results found</div>';
+        return;
+      }
+      resultsDiv.innerHTML = '';
+      data.forEach(function(result) {
+        var item = document.createElement('div');
+        item.className = 'search-result-item';
+        var name = result.display_name.split(',').slice(0, 2).join(', ');
+        var type = result.type || '';
+        item.innerHTML = '<div class="search-result-name">' + esc(name) + '</div><div class="search-result-meta">' + esc(type) + '</div>';
+        item.addEventListener('click', function() {
+          pickPlaceResult(result);
+        });
+        resultsDiv.appendChild(item);
+      });
+    })
+    .catch(function() {
+      resultsDiv.innerHTML = '<div class="search-result-item">Search failed. Check your connection.</div>';
+    });
+}
+
+function pickPlaceResult(result) {
+  var name = result.display_name.split(',').slice(0, 2).join(', ');
+  var lat = parseFloat(result.lat);
+  var lng = parseFloat(result.lon);
+  
+  // Find next empty slot
+  var emptySlot = -1;
+  for (var i = 0; i < presets.length; i++) {
+    if (!presets[i].name) { emptySlot = i; break; }
+  }
+  
+  // If no empty slot, ask which one to replace
+  if (emptySlot === -1) {
+    var slotNum = prompt('All slots are full! Replace which slot? (1-6)', '1');
+    if (slotNum === null) return;
+    emptySlot = parseInt(slotNum) - 1;
+    if (emptySlot < 0 || emptySlot > 5) return;
+  }
+  
+  presets[emptySlot] = { id: emptySlot + 1, name: name, lat: lat, lng: lng };
+  localStorage.setItem('hta_presets', JSON.stringify(presets));
+  
+  // Clear search
+  el('placeSearch').value = '';
+  el('placeSearchResults').style.display = 'none';
+  
+  // Render and go to place
+  renderPresets();
+  goToPlace(presets[emptySlot]);
+}
+
 function searchKebabs() {
   // Use currentLoc (which is updated when you navigate) instead of map.getCenter()
   if (!currentLoc || !currentLoc.lat || !currentLoc.lng) {
